@@ -1,20 +1,17 @@
 import * as React from 'react';
-import { Fragment } from 'react';
 import { Link } from 'react-router-dom';
-
-const examples = [
-    { label: 'Clock', path: '/examples/01' },
-    { label: 'Form Handling', path: '/examples/02' },
-];
+import { examples } from './examples/store';
 
 export class Dashboard extends React.Component {
     render() {
         return (
-            <Fragment>
+            <ul>
                 {examples.map(example => (
-                    <Link to={example.path}>{example.label}</Link>
+                    <li key={example.label}>
+                        <Link to={example.path}>{example.label}</Link>
+                    </li>
                 ))}
-            </Fragment>
+            </ul>
         );
     }
 }
