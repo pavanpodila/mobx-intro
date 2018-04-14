@@ -10,6 +10,7 @@ export class App extends React.Component {
                 <Switch>
                     {examples.map(ex => (
                         <Route
+                            exact
                             key={ex.label}
                             path={ex.path}
                             component={ex.component}

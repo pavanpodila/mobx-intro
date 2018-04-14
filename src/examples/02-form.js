@@ -1,22 +1,29 @@
 import React from 'react';
-import Row from 'antd/lib/grid/row';
-import Col from 'antd/lib/grid/col';
-import Input from 'antd/lib/input/Input';
-import { action, observable, reaction } from 'mobx';
+import { Grid, TextField, Button, CircularProgress } from 'material-ui';
+import { action, observable, reaction, runInAction } from 'mobx';
 import { observer } from 'mobx-react';
-import FormItem from 'antd/lib/form/FormItem';
-import Button from 'antd/lib/button/button';
 import validator from 'validate.js';
+
+validator.validators.checkUsername = value => {
+    return new Promise(resolve => {
+        setTimeout(() => {
+            if (value === 'admin') resolve();
+            else resolve('!== admin');
+        }, 1000);
+    });
+};
 
 class FormData {
     @observable username = '';
     @observable password = '';
 
     @observable.ref validation = null;
+    @observable validating = false;
 
     static rules = {
         username: {
             presence: { allowEmpty: false },
+            checkUsername: true,
         },
         password: {
             presence: { allowEmpty: false },
@@ -32,7 +39,7 @@ class FormData {
                 const { username, password } = this;
                 return { username, password };
             },
-            () => this.validateFields(),
+            data => this.validateFields(data),
         );
     }
 
@@ -43,11 +50,22 @@ class FormData {
 
     @action
     submit() {
-        this.validateFields();
+        const { username, password } = this;
+        this.validateFields({ username, password });
     }
 
-    validateFields() {
-        this.validation = validator.validate(this, FormData.rules);
+    async validateFields(data) {
+        this.validation = null;
+        this.validating = true;
+
+        try {
+            await validator.async(data, FormData.rules);
+            runInAction(() => (this.validation = null));
+        } catch (e) {
+            this.validation = e;
+        } finally {
+            this.validating = false;
+        }
     }
 }
 
@@ -56,10 +74,10 @@ const formData = new FormData();
 @observer
 export class Form extends React.Component {
     render() {
-        const { password, validation } = formData;
+        const { validation, validating } = formData;
         return (
-            <Row>
-                <Col span={12} offset={6}>
+            <Grid container>
+                <CenteredContent>
                     <ValidatedInput
                         label={'Username'}
                         fieldName={'username'}
@@ -67,24 +85,38 @@ export class Form extends React.Component {
                         validation={validation}
                         onChange={this.setUsername}
                     />
+                </CenteredContent>
 
-                    <FormItem label={'Password'}>
-                        <Input
-                            value={password}
-                            onChange={this.setPassword}
-                            type={'password'}
-                        />
-                    </FormItem>
+                <CenteredContent>
+                    <ValidatedInput
+                        type={'password'}
+                        label={'Password'}
+                        entity={formData}
+                        onChange={this.setPassword}
+                        validation={validation}
+                        fieldName={'password'}
+                    />
+                </CenteredContent>
 
+                <CenteredContent style={{ marginTop: '2rem' }}>
                     <Button
+                        variant={'raised'}
                         onClick={this.login}
-                        type={'primary'}
+                        color={'primary'}
                         size={'large'}
+                        disabled={validating}
                     >
                         Login
+                        {validating ? (
+                            <CircularProgress
+                                color={'inherit'}
+                                size={24}
+                                style={{ marginLeft: 10 }}
+                            />
+                        ) : null}
                     </Button>
-                </Col>
-            </Row>
+                </CenteredContent>
+            </Grid>
         );
     }
 
@@ -102,24 +134,42 @@ export class Form extends React.Component {
 }
 
 const ValidatedInput = observer(
-    ({ label, entity, fieldName, onChange, validation }) => {
+    ({ label, entity, fieldName, onChange, validation, type = 'text' }) => {
+        const hasError = !!(validation && validation[fieldName]);
         return (
-            <FormItem
+            <TextField
+                fullWidth={true}
                 label={label}
-                validateStatus={
-                    validation && validation[fieldName] ? 'error' : undefined
+                error={hasError}
+                helperText={
+                    hasError ? (
+                        <ErrorList errors={validation[fieldName]} />
+                    ) : (
+                        undefined
+                    )
                 }
-                help={
-                    validation && validation[fieldName]
-                        ? validation[fieldName][0]
-                        : undefined
-                }
-                hasFeedback={
-                    validation && validation[fieldName] ? true : undefined
-                }
-            >
-                <Input value={entity[fieldName]} onChange={onChange} />
-            </FormItem>
+                value={entity[fieldName]}
+                onChange={onChange}
+                type={type}
+            />
         );
     },
 );
+
+function ErrorList({ errors }) {
+    return errors.map(error => (
+        <span key={error} style={{ display: 'block' }}>
+            {error}
+        </span>
+    ));
+}
+
+function CenteredContent({ children, style }) {
+    return (
+        <Grid container justify={'center'} style={style}>
+            <Grid item xs={6} style={{ marginBottom: '1rem' }}>
+                {children}
+            </Grid>
+        </Grid>
+    );
+}

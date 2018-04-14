@@ -3,13 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "antd": "^3.4.1",
+    "@material-ui/icons": "^1.0.0-beta.42",
     "custom-react-scripts": "0.2.2",
+    "material-ui": "^1.0.0-beta.41",
     "mobx": "^4.1.1",
     "mobx-react": "^5.0.0",
     "react": "^16.3.1",
     "react-dom": "^16.3.1",
     "react-router-dom": "^4.2.2",
+    "typeface-roboto": "0.0.54",
     "validate.js": "^0.12.0"
   },
   "scripts": {
@@ -21,6 +23,7 @@
   "devDependencies": {
     "@babel/core": "^7.0.0-beta.44",
     "@babel/node": "^7.0.0-beta.44",
-    "@babel/preset-env": "^7.0.0-beta.44"
+    "@babel/preset-env": "^7.0.0-beta.44",
+    "json-server": "^0.12.1"
   }
 }

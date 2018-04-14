@@ -1,16 +1,13 @@
 import React from 'react';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react';
+import { Typography } from 'material-ui';
 
-let time = (() => {
-    let t = observable.box(new Date());
+let time = observable.box(new Date());
 
-    setInterval(() => {
-        t.set(new Date());
-    }, 1000);
-
-    return t;
-})();
+setInterval(() => {
+    time.set(new Date());
+}, 1000);
 
 @observer
 export class Clock extends React.Component {
@@ -18,6 +15,10 @@ export class Clock extends React.Component {
         const value = time.get();
         const timeValue = `${value.getHours()} : ${value.getMinutes()} : ${value.getSeconds()}`;
 
-        return <h3>{timeValue}</h3>;
+        return (
+            <Typography style={{ textAlign: 'center' }} variant={'display4'}>
+                {timeValue}
+            </Typography>
+        );
     }
 }
