@@ -1,6 +1,15 @@
 import { observable, computed, action } from 'mobx';
 
-class TodoListStore {
+class Todo {
+    @observable description = '';
+    @observble done = false;
+
+    constructor(description) {
+        this.description = description;
+    }
+}
+
+class TodoList {
     @observable todos = [];
 
     @computed
@@ -14,14 +23,23 @@ class TodoListStore {
     }
 
     @action
-    addTodo(description) {}
+    addTodo(description) {
+        const todo = new Todo(description);
+        this.todos.push(todo);
+    }
+
+    @action.bound
+    markComplete(todo) {
+        todo.done = true;
+    }
 
     @action
-    markComplete(todo) {}
+    markAllComplete() {
+        this.todos.forEach(this.markComplete);
+    }
 
     @action
-    markAllComplete() {}
-
-    @action
-    clearCompleted() {}
+    clearCompleted() {
+        this.todos = this.todos.filter(todo => todo.done);
+    }
 }
