@@ -80,13 +80,13 @@ class TodoList {
     }
 
     @action.bound
-    markComplete(todo, flag) {
+    markComplete(todo, flag = true) {
         todo.done = flag;
     }
 
     @action.bound
     markAllComplete() {
-        this.todos.forEach(this.markComplete);
+        this.todos.forEach(t => this.markComplete(t, true));
     }
 
     @action.bound
