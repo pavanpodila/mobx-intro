@@ -14,6 +14,7 @@ import {
     TextField,
 } from 'material-ui';
 import { observer } from 'mobx-react';
+import DevTools from 'mobx-react-devtools';
 
 class Todo {
     @observable description = '';
@@ -35,8 +36,8 @@ class TodoList {
     @observable filter = 'all'; // all | active | completed
 
     constructor() {
-        this.addTodo('hello');
-        this.addTodo('world');
+        this.addTodo('give a talk');
+        this.addTodo('take a break');
     }
 
     @computed
@@ -104,6 +105,8 @@ export class TodoListComponent extends React.Component {
 
         return (
             <Fragment>
+                <DevTools />
+
                 <TodoInput onEnter={this.onEnterKey} />
 
                 <TodoToolbar
