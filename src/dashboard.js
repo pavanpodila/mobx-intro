@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { examples } from './examples/store';
+import { examples } from './examples/index';
 import {
     AppBar,
     Button,

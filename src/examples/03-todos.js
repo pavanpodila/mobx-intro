@@ -12,6 +12,7 @@ import {
     Radio,
     RadioGroup,
     TextField,
+    Typography,
 } from 'material-ui';
 import { observer } from 'mobx-react';
 import DevTools from 'mobx-react-devtools';
@@ -38,6 +39,12 @@ class TodoList {
     constructor() {
         this.addTodo('give a talk');
         this.addTodo('take a break');
+    }
+
+    @computed
+    get itemsRemainingDescription() {
+        const count = this.activeTodos.length;
+        return `${count} ${count === 1 ? 'item' : 'items'} remaining`;
     }
 
     @computed
@@ -175,7 +182,11 @@ const TodoInput = observer(({ onEnter }) => {
 function TodoToolbar({ actions }) {
     return (
         <Grid container direction={'row'} spacing={24}>
-            <Grid item xs={6}>
+            <Grid item>
+                <ItemDescription />
+            </Grid>
+
+            <Grid item>
                 <Button
                     variant={'raised'}
                     size={'small'}
@@ -192,12 +203,18 @@ function TodoToolbar({ actions }) {
                     Remove Completed
                 </Button>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item>
                 <TodoFilter />
             </Grid>
         </Grid>
     );
 }
+
+const ItemDescription = observer(() => {
+    const { itemsRemainingDescription } = todoListStore;
+
+    return <Typography>{itemsRemainingDescription}</Typography>;
+});
 
 const TodoFilter = observer(() => {
     const { filter } = todoListStore;

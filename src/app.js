@@ -1,6 +1,6 @@
 import React from 'react';
 import { Dashboard } from './dashboard';
-import { examples } from './examples/store';
+import { examples } from './examples';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
 export class App extends React.Component {
