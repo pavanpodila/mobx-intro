@@ -53,8 +53,18 @@ class TodoList {
     }
 
     @computed
+    get hasActiveTodos() {
+        return this.activeTodos.length > 0;
+    }
+
+    @computed
     get completedTodos() {
         return this.todos.filter(x => x.done);
+    }
+
+    @computed
+    get hasCompletedTodos() {
+        return this.completedTodos.length > 0;
     }
 
     @computed
@@ -81,7 +91,12 @@ class TodoList {
 
     @action
     addTodo(description) {
-        const todo = new Todo(description);
+        const actualValue = description.trim();
+        if (actualValue === '') {
+            return;
+        }
+
+        const todo = new Todo(actualValue);
         this.todos.push(todo);
 
         this.currentDescription = '';
@@ -181,27 +196,24 @@ const TodoInput = observer(({ onEnter }) => {
 
 function TodoToolbar({ actions }) {
     return (
-        <Grid container direction={'row'} spacing={24}>
+        <Grid container direction={'row'} spacing={24} alignItems={'center'}>
             <Grid item>
                 <ItemDescription />
             </Grid>
 
             <Grid item>
-                <Button
-                    variant={'raised'}
-                    size={'small'}
-                    style={{ marginRight: 10 }}
+                <ActionButton
+                    attr={'hasActiveTodos'}
                     onClick={actions.completeAll}
                 >
                     Complete All
-                </Button>
-                <Button
-                    variant={'raised'}
-                    size={'small'}
+                </ActionButton>
+                <ActionButton
+                    attr={'hasCompletedTodos'}
                     onClick={actions.removeCompleted}
                 >
                     Remove Completed
-                </Button>
+                </ActionButton>
             </Grid>
             <Grid item>
                 <TodoFilter />
@@ -209,6 +221,20 @@ function TodoToolbar({ actions }) {
         </Grid>
     );
 }
+
+const ActionButton = observer(({ attr, children, onClick }) => {
+    return (
+        <Button
+            variant={'raised'}
+            size={'small'}
+            onClick={onClick}
+            disabled={!todoListStore[attr]}
+            style={{ marginLeft: 10 }}
+        >
+            {children}
+        </Button>
+    );
+});
 
 const ItemDescription = observer(() => {
     const { itemsRemainingDescription } = todoListStore;
