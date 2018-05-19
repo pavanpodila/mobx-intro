@@ -41,6 +41,7 @@ class TodoList {
         this.addTodo('take a break');
     }
 
+    //region Computed Properties
     @computed
     get itemsRemainingDescription() {
         const count = this.activeTodos.length;
@@ -78,7 +79,9 @@ class TodoList {
                 return this.todos;
         }
     }
+    //endregion
 
+    //region Actions
     @action
     setDescription(description) {
         this.currentDescription = description;
@@ -116,6 +119,7 @@ class TodoList {
     removeCompleted() {
         this.todos = this.todos.filter(todo => !todo.done);
     }
+    //endregion
 }
 
 const todoListStore = new TodoList();

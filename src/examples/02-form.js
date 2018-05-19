@@ -62,9 +62,13 @@ class FormData {
             await validator.async(data, FormData.rules);
             runInAction(() => (this.validation = null));
         } catch (e) {
-            this.validation = e;
+            runInAction(() => {
+                this.validation = e;
+            });
         } finally {
-            this.validating = false;
+            runInAction(() => {
+                this.validating = false;
+            });
         }
     }
 }
