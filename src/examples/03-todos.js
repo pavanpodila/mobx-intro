@@ -43,19 +43,19 @@ class TodoList {
 
     //region Computed Properties
     @computed
-    get itemsRemainingDescription() {
-        const count = this.activeTodos.length;
+    get itemsPendingDescription() {
+        const count = this.pendingTodos.length;
         return `${count} ${count === 1 ? 'item' : 'items'} remaining`;
     }
 
     @computed
-    get activeTodos() {
+    get pendingTodos() {
         return this.todos.filter(x => x.done === false);
     }
 
     @computed
-    get hasActiveTodos() {
-        return this.activeTodos.length > 0;
+    get hasPendingTodos() {
+        return this.pendingTodos.length > 0;
     }
 
     @computed
@@ -71,8 +71,8 @@ class TodoList {
     @computed
     get visibleTodos() {
         switch (this.filter) {
-            case 'active':
-                return this.activeTodos;
+            case 'pending':
+                return this.pendingTodos;
             case 'completed':
                 return this.completedTodos;
             default:
@@ -207,7 +207,7 @@ function TodoToolbar({ actions }) {
 
             <Grid item>
                 <ActionButton
-                    attr={'hasActiveTodos'}
+                    attr={'hasPendingTodos'}
                     onClick={actions.completeAll}
                 >
                     Complete All
@@ -241,9 +241,9 @@ const ActionButton = observer(({ attr, children, onClick }) => {
 });
 
 const ItemDescription = observer(() => {
-    const { itemsRemainingDescription } = todoListStore;
+    const { itemsPendingDescription } = todoListStore;
 
-    return <Typography>{itemsRemainingDescription}</Typography>;
+    return <Typography>{itemsPendingDescription}</Typography>;
 });
 
 const TodoFilter = observer(() => {
@@ -258,8 +258,8 @@ const TodoFilter = observer(() => {
             <FormControlLabel control={<Radio />} value={'all'} label={'All'} />
             <FormControlLabel
                 control={<Radio />}
-                value={'active'}
-                label={'Active'}
+                value={'pending'}
+                label={'Pending'}
             />
             <FormControlLabel
                 control={<Radio />}
