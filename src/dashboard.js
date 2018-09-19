@@ -10,7 +10,7 @@ import {
     Grid,
     Toolbar,
     Typography,
-} from 'material-ui';
+} from '@material-ui/core';
 
 export class Dashboard extends React.Component {
     render() {

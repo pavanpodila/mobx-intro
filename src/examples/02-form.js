@@ -1,6 +1,6 @@
 import React from 'react';
-import { Grid, TextField, Button, CircularProgress } from 'material-ui';
-import { action, observable, reaction, runInAction } from 'mobx';
+import { Button, CircularProgress, Grid, TextField } from '@material-ui/core';
+import { action, observable, runInAction } from 'mobx';
 import { observer } from 'mobx-react';
 import validator from 'validate.js';
 
@@ -14,11 +14,15 @@ validator.validators.checkUsername = value => {
 };
 
 class FormData {
-    @observable username = '';
-    @observable password = '';
+    @observable
+    username = '';
+    @observable
+    password = '';
 
-    @observable.ref validation = null;
-    @observable validating = false;
+    @observable.ref
+    validation = null;
+    @observable
+    validating = false;
 
     static rules = {
         username: {
