@@ -34,13 +34,13 @@ class FormData {
     };
 
     constructor() {
-        reaction(
-            () => {
-                const { username, password } = this;
-                return { username, password };
-            },
-            data => this.validateFields(data),
-        );
+        // reaction(
+        //     () => {
+        //         const { username, password } = this;
+        //         return { username, password };
+        //     },
+        //     data => this.validateFields(data),
+        // );
     }
 
     @action

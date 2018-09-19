@@ -13,13 +13,15 @@ import {
     RadioGroup,
     TextField,
     Typography,
-} from 'material-ui';
+} from '@material-ui/core';
 import { observer } from 'mobx-react';
 import DevTools from 'mobx-react-devtools';
 
 class Todo {
-    @observable description = '';
-    @observable done = false;
+    @observable
+    description = '';
+    @observable
+    done = false;
 
     id = null;
 
@@ -32,9 +34,12 @@ class Todo {
 }
 
 class TodoList {
-    @observable.shallow todos = [];
-    @observable currentDescription = '';
-    @observable filter = 'all'; // all | active | completed
+    @observable.shallow
+    todos = [];
+    @observable
+    currentDescription = '';
+    @observable
+    filter = 'all'; // all | active | completed
 
     constructor() {
         this.addTodo('give a talk');
