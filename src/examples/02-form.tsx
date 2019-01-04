@@ -3,9 +3,9 @@ import { Button, CircularProgress, Grid, TextField } from '@material-ui/core';
 import { action, observable, reaction, runInAction } from 'mobx';
 import { observer } from 'mobx-react';
 import validator from 'validate.js';
-// import {configure} from 'mobx'
+// import { configure } from 'mobx';
 
-// configure({enforceActions: 'always'})
+// configure({ enforceActions: 'always' });
 
 validator.validators.checkUsername = (value: string) => {
     return new Promise(resolve => {
