@@ -17,6 +17,10 @@ import {
 import { observer } from 'mobx-react';
 import DevTools from 'mobx-react-devtools';
 
+declare var window: {
+    todoListStore: TodoList;
+    [key: string]: any;
+}
 class Todo {
     public static counter = 0;
     @observable
@@ -35,8 +39,10 @@ class Todo {
 class TodoList {
     @observable.shallow
     public todos: Todo[] = [];
+
     @observable
     public currentDescription = '';
+
     @observable
     public filter = 'all'; // all | active | completed
 
@@ -127,6 +133,7 @@ class TodoList {
 }
 
 const todoListStore = new TodoList();
+window.todoStore = todoListStore;
 
 @observer
 export class TodoListComponent extends React.Component {

@@ -1,8 +1,11 @@
 import React, { CSSProperties, StatelessComponent } from 'react';
 import { Button, CircularProgress, Grid, TextField } from '@material-ui/core';
-import { action, observable, runInAction } from 'mobx';
+import { action, observable, reaction, runInAction } from 'mobx';
 import { observer } from 'mobx-react';
 import validator from 'validate.js';
+// import {configure} from 'mobx'
+
+// configure({enforceActions: 'always'})
 
 validator.validators.checkUsername = (value: string) => {
     return new Promise(resolve => {
@@ -42,13 +45,13 @@ class FormData {
     public validating = false;
 
     constructor() {
-        // reaction(
-        //     () => {
-        //         const { username, password } = this;
-        //         return { username, password };
-        //     },
-        //     data => this.validateFields(data),
-        // );
+        reaction(
+            () => {
+                const { username, password } = this;
+                return { username, password };
+            },
+            data => this.validateFields(data),
+        );
     }
 
     @action
@@ -62,7 +65,7 @@ class FormData {
         this.validateFields({ username, password });
     }
 
-    public async validateFields(data: { username: string; password: string }) {
+    public async validateFields(data: { username: string; password?: string }) {
         this.validation = null;
         this.validating = true;
 
