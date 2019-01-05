@@ -1,4 +1,4 @@
-import React, { CSSProperties, StatelessComponent } from 'react';
+import React, { CSSProperties, FunctionComponent } from 'react';
 import { Button, CircularProgress, Grid, TextField } from '@material-ui/core';
 import { action, observable, reaction, runInAction } from 'mobx';
 import { observer } from 'mobx-react';
@@ -174,7 +174,7 @@ const ValidatedInput = observer(
 interface ErrorListProps {
     errors: any[];
 }
-const ErrorList: StatelessComponent<ErrorListProps> = ({ errors }) => {
+const ErrorList: FunctionComponent<ErrorListProps> = ({ errors }) => {
     return (
         <div>
             {errors.map(error => (

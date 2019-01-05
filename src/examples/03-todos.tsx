@@ -1,5 +1,5 @@
 import { action, computed, observable } from 'mobx';
-import React, { Fragment, StatelessComponent } from 'react';
+import React, { Fragment, FunctionComponent } from 'react';
 import {
     Button,
     Checkbox,
@@ -20,7 +20,7 @@ import DevTools from 'mobx-react-devtools';
 declare var window: {
     todoListStore: TodoList;
     [key: string]: any;
-}
+};
 class Todo {
     public static counter = 0;
     @observable
@@ -215,7 +215,7 @@ interface TodoToolbarProps {
         removeCompleted: () => void;
     };
 }
-const TodoToolbar: StatelessComponent<TodoToolbarProps> = ({ actions }) => {
+const TodoToolbar: FunctionComponent<TodoToolbarProps> = ({ actions }) => {
     return (
         <Grid
             container={true}
