@@ -14,7 +14,7 @@ import {
     TextField,
     Typography,
 } from '@material-ui/core';
-import { observer } from 'mobx-react';
+import { Observer, observer } from 'mobx-react';
 import DevTools from 'mobx-react-devtools';
 
 declare var window: {
@@ -36,6 +36,12 @@ class Todo {
     }
 }
 
+enum VisibilityFilter {
+    all = 'all',
+    pending = 'active',
+    completed = 'completed',
+}
+
 class TodoList {
     @observable.shallow
     public todos: Todo[] = [];
@@ -44,7 +50,7 @@ class TodoList {
     public currentDescription = '';
 
     @observable
-    public filter = 'all'; // all | active | completed
+    public filter: VisibilityFilter = VisibilityFilter.all;
 
     constructor() {
         this.addTodo('give a talk');
@@ -79,11 +85,25 @@ class TodoList {
     }
 
     @computed
+    get canMarkAllCompleted() {
+        return (
+            this.filter !== VisibilityFilter.completed && this.hasPendingTodos
+        );
+    }
+
+    @computed
+    get canRemoveCompleted() {
+        return (
+            this.filter !== VisibilityFilter.pending && this.hasCompletedTodos
+        );
+    }
+
+    @computed
     get visibleTodos() {
         switch (this.filter) {
-            case 'pending':
+            case VisibilityFilter.pending:
                 return this.pendingTodos;
-            case 'completed':
+            case VisibilityFilter.completed:
                 return this.completedTodos;
             default:
                 return this.todos;
@@ -98,7 +118,7 @@ class TodoList {
     }
 
     @action
-    public setFilter(filter: string) {
+    public setFilter(filter: VisibilityFilter) {
         this.filter = filter;
     }
 
@@ -228,18 +248,32 @@ const TodoToolbar: FunctionComponent<TodoToolbarProps> = ({ actions }) => {
             </Grid>
 
             <Grid item={true}>
-                <ActionButton
-                    attr={'hasPendingTodos'}
-                    onClick={actions.completeAll}
-                >
-                    Complete All
-                </ActionButton>
-                <ActionButton
-                    attr={'hasCompletedTodos'}
-                    onClick={actions.removeCompleted}
-                >
-                    Remove Completed
-                </ActionButton>
+                <Observer>
+                    {() => (
+                        <Button
+                            variant={'raised'}
+                            size={'small'}
+                            onClick={actions.completeAll}
+                            disabled={!todoListStore.canMarkAllCompleted}
+                            style={{ marginLeft: 10 }}
+                        >
+                            Complete All
+                        </Button>
+                    )}
+                </Observer>
+                <Observer>
+                    {() => (
+                        <Button
+                            variant={'raised'}
+                            size={'small'}
+                            onClick={actions.removeCompleted}
+                            disabled={!todoListStore.canRemoveCompleted}
+                            style={{ marginLeft: 10 }}
+                        >
+                            Remove Completed
+                        </Button>
+                    )}
+                </Observer>
             </Grid>
             <Grid item={true}>
                 <TodoFilter />
@@ -247,20 +281,6 @@ const TodoToolbar: FunctionComponent<TodoToolbarProps> = ({ actions }) => {
         </Grid>
     );
 };
-
-const ActionButton = observer(({ attr, children, onClick }) => {
-    return (
-        <Button
-            variant={'raised'}
-            size={'small'}
-            onClick={onClick}
-            disabled={!todoListStore[attr]}
-            style={{ marginLeft: 10 }}
-        >
-            {children}
-        </Button>
-    );
-});
 
 const ItemDescription = observer(() => {
     const { itemsPendingDescription } = todoListStore;
@@ -275,17 +295,23 @@ const TodoFilter = observer(() => {
         <RadioGroup
             style={{ flexDirection: 'row' }}
             value={filter}
-            onChange={(event, value) => todoListStore.setFilter(value)}
+            onChange={(event, value) =>
+                todoListStore.setFilter(value as VisibilityFilter)
+            }
         >
-            <FormControlLabel control={<Radio />} value={'all'} label={'All'} />
             <FormControlLabel
                 control={<Radio />}
-                value={'pending'}
+                value={VisibilityFilter.all}
+                label={'All'}
+            />
+            <FormControlLabel
+                control={<Radio />}
+                value={VisibilityFilter.pending}
                 label={'Pending'}
             />
             <FormControlLabel
                 control={<Radio />}
-                value={'completed'}
+                value={VisibilityFilter.completed}
                 label={'Completed'}
             />
         </RadioGroup>
